@@ -34,7 +34,11 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 
 	protected Connection webSocketConnection;
 	protected XMPPConnection xmppConnection;
-
+	
+	public XmppWebSocket(){
+//		XMPPConnection.DEBUG_ENABLED = true;
+	}
+	
 	@Override
 	public void onOpen(Connection arg0) {
 		this.webSocketConnection = arg0;
@@ -63,6 +67,7 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 				xmppConnection.connect();
 				xmppConnection.login(messageReceived.getData().getUserName(), messageReceived.getData()
 						.getPassword());
+				System.out.println(messageReceived.getData().getUserName() + " has logged in!");
 				
 				//Send message to frontend 
 				Message messageToSend = new Message("login");
@@ -78,7 +83,7 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 				
 				//form the rosterlist
 				for (RosterEntry entry : entries) {
-					System.out.println(entry);
+//					System.out.println(entry);
 					Presence presence = roster.getPresence(entry.getUser());
 					String mode = null;
 					if (presence.isAvailable()) {
