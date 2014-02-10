@@ -1,8 +1,4 @@
-package in.inagaki.xmppjetty;
-
-import in.inagaki.xmppjetty.bean.Data;
-import in.inagaki.xmppjetty.bean.Message;
-import in.inagaki.xmppjetty.bean.User;
+package xmppjetty;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,51 +25,58 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 
+import pojo.Data;
+import pojo.Message;
+import pojo.User;
+
 public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 		MessageListener, ChatManagerListener {
 
-	protected Connection connection;
-	protected XMPPConnection talk;
+	protected Connection webSocketConnection;
+	protected XMPPConnection xmppConnection;
 
 	@Override
 	public void onOpen(Connection arg0) {
-		this.connection = arg0;
+		this.webSocketConnection = arg0;
 	}
 
 	@Override
 	public void onClose(int arg0, String arg1) {
-		talk.disconnect();
+		xmppConnection.disconnect();
 	}
 
 	@Override
 	public void onMessage(String arg0) {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			Message recMsg = mapper.readValue(arg0, Message.class);
-			if (recMsg.getType().equals("login")) {
+			Message messageReceived = mapper.readValue(arg0, Message.class);
+			if (messageReceived.getType().equals("login")) {
 
 				// Set XMPP connection
 				SmackConfiguration.setPacketReplyTimeout(5000);
 				ConnectionConfiguration config = new ConnectionConfiguration(
-						recMsg.getData().getServer(), 5222, "gmail.com");
+						messageReceived.getData().getServer(), 5222, "localhost");
 				config.setSASLAuthenticationEnabled(false);
 
 				// Log in to XMPP server
-				talk = new XMPPConnection(config);
-				talk.connect();
-				talk.login(recMsg.getData().getUserName(), recMsg.getData()
+				xmppConnection = new XMPPConnection(config);
+				xmppConnection.connect();
+				xmppConnection.login(messageReceived.getData().getUserName(), messageReceived.getData()
 						.getPassword());
-
-				Message sndMsg = new Message("login");
-				connection.sendMessage(mapper.writeValueAsString(sndMsg));
-
-				Roster roster = talk.getRoster();
+				
+				//Send message to frontend 
+				Message messageToSend = new Message("login");
+				webSocketConnection.sendMessage(mapper.writeValueAsString(messageToSend));
+				
+				//get the rosterlist
+				Roster roster = xmppConnection.getRoster();
 				roster.addRosterListener(this);
-				talk.getChatManager().addChatListener(this);
+				xmppConnection.getChatManager().addChatListener(this);
 
 				Collection<RosterEntry> entries = roster.getEntries();
 				List<User> users = new ArrayList<User>();
-
+				
+				//form the rosterlist
 				for (RosterEntry entry : entries) {
 					System.out.println(entry);
 					Presence presence = roster.getPresence(entry.getUser());
@@ -87,16 +90,20 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 					String name = entry.getName() != null ? entry.getName() : entry.getUser();
 					users.add(new User(name, entry.getUser(), mode));
 				}
+				
+				Message rosterToSend = new Message("roster", users);
 
-				Message sndRoster = new Message("roster", users);
+				System.out.println(mapper.writeValueAsString(rosterToSend));
+				
+				//send the roster to frontend
+				webSocketConnection.sendMessage(mapper.writeValueAsString(rosterToSend));
 
-				System.out.println(mapper.writeValueAsString(sndRoster));
-				connection.sendMessage(mapper.writeValueAsString(sndRoster));
-
-			} else if (recMsg.getType().equals("chat")) {
-				ChatManager cm = talk.getChatManager();
-				Chat chat = cm.createChat(recMsg.getData().getRemote(), this);
-				chat.sendMessage(recMsg.getData().getText());
+			} else if (messageReceived.getType().equals("chat")) {
+				
+				//just route the regular chat messages to the respective receiver
+				ChatManager chatManager = xmppConnection.getChatManager();
+				Chat chat = chatManager.createChat(messageReceived.getData().getRemote(), this);
+				chat.sendMessage(messageReceived.getData().getText());
 			}
 
 		} catch (JsonParseException e) {
@@ -125,14 +132,16 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 	public void processMessage(Chat chat,
 			org.jivesoftware.smack.packet.Message messgage) {
 		if (messgage.getBody() == null) {
+			System.out.println("Empty message body!");
 			return;
 		}
-		StringTokenizer st = new StringTokenizer(messgage.getFrom(), "/");
-		Message sndMsg = new Message("chat", new Data(st.nextToken(), messgage.getBody()));
+		StringTokenizer stringTokenizer = new StringTokenizer(messgage.getFrom(), "/");
+		Message messageToSend = new Message("chat", new Data(stringTokenizer.nextToken(), messgage.getBody()));
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			connection.sendMessage(mapper.writeValueAsString(sndMsg));
+			//send message to the frontend
+			webSocketConnection.sendMessage(mapper.writeValueAsString(messageToSend));
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -146,9 +155,9 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 	@Override
 	public void entriesAdded(Collection<String> arg0) {
 		System.out.println(">>entriesAdded:");
-		Iterator<String> it = arg0.iterator();
-		while (it.hasNext()) {
-			String entry = it.next();
+		Iterator<String> iterator = arg0.iterator();
+		while (iterator.hasNext()) {
+			String entry = iterator.next();
 			System.out.println(entry);
 		}
 	}
@@ -156,9 +165,9 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 	@Override
 	public void entriesDeleted(Collection<String> arg0) {
 		System.out.println(">>entriesDeleted:");
-		Iterator<String> it = arg0.iterator();
-		while (it.hasNext()) {
-			String entry = it.next();
+		Iterator<String> iterator = arg0.iterator();
+		while (iterator.hasNext()) {
+			String entry = iterator.next();
 			System.out.println(entry);
 		}
 	}
@@ -166,9 +175,9 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 	@Override
 	public void entriesUpdated(Collection<String> arg0) {
 		System.out.println(">>entriesUpdated:");
-		Iterator<String> it = arg0.iterator();
-		while (it.hasNext()) {
-			String entry = it.next();
+		Iterator<String> iterator = arg0.iterator();
+		while (iterator.hasNext()) {
+			String entry = iterator.next();
 			System.out.println(entry);
 		}
 	}
@@ -183,14 +192,15 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 		if (presence.isAway()) {
 			mode = "away";
 		}
-		StringTokenizer st = new StringTokenizer(presence.getFrom(), "/");
-		User user = new User(null, st.nextToken(), mode);
+		StringTokenizer stringTokenizer = new StringTokenizer(presence.getFrom(), "/");
+		User user = new User(null, stringTokenizer.nextToken(), mode);
 		List<User> users = new ArrayList<User>();
 		users.add(user);
-		Message sndMsg = new Message("presence", users);
+		Message messageToSend = new Message("presence", users);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			connection.sendMessage(mapper.writeValueAsString(sndMsg));
+			//send message to the frontend
+			webSocketConnection.sendMessage(mapper.writeValueAsString(messageToSend));
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {

@@ -35,8 +35,7 @@ $(document).ready(function () {
 });
 
 ws.onmessage = function (event) {
-    console.log("Receive message:" + event.data);
-
+    console.log("Received message:" + event.data);
     var message = JSON.parse(event.data);
     if (message.Type == "presence") {
         for (var i = 0; i < message.Roster.length; i++) {

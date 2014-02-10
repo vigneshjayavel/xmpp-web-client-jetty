@@ -1,4 +1,4 @@
-package in.inagaki.xmppjetty;
+package xmppjetty;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,7 +14,6 @@ public class XmppWebSocketServlet extends WebSocketServlet {
 
 	@Override
 	public WebSocket doWebSocketConnect(HttpServletRequest arg0, String arg1) {
-		// TODO Auto-generated method stub
 		return new XmppWebSocket();
 	}
 

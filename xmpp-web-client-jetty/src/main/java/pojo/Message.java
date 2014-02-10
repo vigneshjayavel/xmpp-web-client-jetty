@@ -1,4 +1,4 @@
-package in.inagaki.xmppjetty.bean;
+package pojo;
 
 import java.util.List;
 
