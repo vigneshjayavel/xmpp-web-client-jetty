@@ -34,11 +34,11 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 
 	protected Connection webSocketConnection;
 	protected XMPPConnection xmppConnection;
-	
-	public XmppWebSocket(){
-//		XMPPConnection.DEBUG_ENABLED = true;
+
+	public XmppWebSocket() {
+		// XMPPConnection.DEBUG_ENABLED = true;
 	}
-	
+
 	@Override
 	public void onOpen(Connection arg0) {
 		this.webSocketConnection = arg0;
@@ -59,31 +59,34 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 				// Set XMPP connection
 				SmackConfiguration.setPacketReplyTimeout(5000);
 				ConnectionConfiguration config = new ConnectionConfiguration(
-						messageReceived.getData().getServer(), 5222, "localhost");
+						messageReceived.getData().getServer(), 5222,
+						"localhost");
 				config.setSASLAuthenticationEnabled(false);
 
 				// Log in to XMPP server
 				xmppConnection = new XMPPConnection(config);
 				xmppConnection.connect();
-				xmppConnection.login(messageReceived.getData().getUserName(), messageReceived.getData()
-						.getPassword());
-				System.out.println(messageReceived.getData().getUserName() + " has logged in!");
-				
-				//Send message to frontend 
+				xmppConnection.login(messageReceived.getData().getUserName(),
+						messageReceived.getData().getPassword());
+				System.out.println(messageReceived.getData().getUserName()
+						+ " has logged in!");
+
+				// Send message to frontend
 				Message messageToSend = new Message("login");
-				webSocketConnection.sendMessage(mapper.writeValueAsString(messageToSend));
-				
-				//get the rosterlist
+				webSocketConnection.sendMessage(mapper
+						.writeValueAsString(messageToSend));
+
+				// get the rosterlist
 				Roster roster = xmppConnection.getRoster();
 				roster.addRosterListener(this);
 				xmppConnection.getChatManager().addChatListener(this);
 
 				Collection<RosterEntry> entries = roster.getEntries();
 				List<User> users = new ArrayList<User>();
-				
-				//form the rosterlist
+
+				// form the rosterlist
 				for (RosterEntry entry : entries) {
-//					System.out.println(entry);
+					// System.out.println(entry);
 					Presence presence = roster.getPresence(entry.getUser());
 					String mode = null;
 					if (presence.isAvailable()) {
@@ -92,22 +95,26 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 					if (presence.isAway()) {
 						mode = "away";
 					}
-					String name = entry.getName() != null ? entry.getName() : entry.getUser();
+					String name = entry.getName() != null ? entry.getName()
+							: entry.getUser();
 					users.add(new User(name, entry.getUser(), mode));
 				}
-				
+
 				Message rosterToSend = new Message("roster", users);
 
 				System.out.println(mapper.writeValueAsString(rosterToSend));
-				
-				//send the roster to frontend
-				webSocketConnection.sendMessage(mapper.writeValueAsString(rosterToSend));
+
+				// send the roster to frontend
+				webSocketConnection.sendMessage(mapper
+						.writeValueAsString(rosterToSend));
 
 			} else if (messageReceived.getType().equals("chat")) {
-				
-				//just route the regular chat messages to the respective receiver
+
+				// just route the regular chat messages to the respective
+				// receiver
 				ChatManager chatManager = xmppConnection.getChatManager();
-				Chat chat = chatManager.createChat(messageReceived.getData().getRemote(), this);
+				Chat chat = chatManager.createChat(messageReceived.getData()
+						.getRemote(), this);
 				chat.sendMessage(messageReceived.getData().getText());
 			}
 
@@ -140,13 +147,16 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 			System.out.println("Empty message body!");
 			return;
 		}
-		StringTokenizer stringTokenizer = new StringTokenizer(messgage.getFrom(), "/");
-		Message messageToSend = new Message("chat", new Data(stringTokenizer.nextToken(), messgage.getBody()));
+		StringTokenizer stringTokenizer = new StringTokenizer(
+				messgage.getFrom(), "/");
+		Message messageToSend = new Message("chat", new Data(
+				stringTokenizer.nextToken(), messgage.getBody()));
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			//send message to the frontend
-			webSocketConnection.sendMessage(mapper.writeValueAsString(messageToSend));
+			// send message to the frontend
+			webSocketConnection.sendMessage(mapper
+					.writeValueAsString(messageToSend));
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -189,7 +199,8 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 
 	@Override
 	public void presenceChanged(Presence presence) {
-		System.out.println(">>presenceChanged:" + presence.getFrom() + " " + presence);
+		System.out.println(">>presenceChanged:" + presence.getFrom() + " "
+				+ presence);
 		String mode = null;
 		if (presence.isAvailable()) {
 			mode = "available";
@@ -197,15 +208,17 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 		if (presence.isAway()) {
 			mode = "away";
 		}
-		StringTokenizer stringTokenizer = new StringTokenizer(presence.getFrom(), "/");
+		StringTokenizer stringTokenizer = new StringTokenizer(
+				presence.getFrom(), "/");
 		User user = new User(null, stringTokenizer.nextToken(), mode);
 		List<User> users = new ArrayList<User>();
 		users.add(user);
 		Message messageToSend = new Message("presence", users);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			//send message to the frontend
-			webSocketConnection.sendMessage(mapper.writeValueAsString(messageToSend));
+			// send message to the frontend
+			webSocketConnection.sendMessage(mapper
+					.writeValueAsString(messageToSend));
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
