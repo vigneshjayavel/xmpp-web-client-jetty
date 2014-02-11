@@ -40,17 +40,20 @@ public class Authenticator {
 	}
 	
 	public boolean isPresentInOpenFire(String userName){
-		
+		//code for checking whether the username is present in the openfire database
+		//this does involve api call to the openfire server to retrieve the user's registration status
 		return false;
 	}
 	
 	public void authenticate(String userName, String password, String orgName){
 		if(isAuthenticTccUser(userName, password, orgName)){
 			if(isPresentInOpenFire(userName)){
-				
+				//then just login using the openfire api
+				//the user is in no way prompted for the username and password here
 			}
 			else{
-				
+				//create the user.
+				//he is a firsttime user of the system.
 			}
 		}
 	}
