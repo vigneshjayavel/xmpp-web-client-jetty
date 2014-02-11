@@ -1,4 +1,4 @@
-package pojo;
+package com.vigneshjayavel.server.pojo;
 
 import java.util.List;
 

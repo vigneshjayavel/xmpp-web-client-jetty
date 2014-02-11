@@ -1,4 +1,4 @@
-package pojo;
+package com.vigneshjayavel.server.pojo;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 

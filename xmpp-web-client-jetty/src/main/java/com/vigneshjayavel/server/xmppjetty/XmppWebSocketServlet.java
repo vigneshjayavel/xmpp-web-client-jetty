@@ -1,4 +1,4 @@
-package xmppjetty;
+package com.vigneshjayavel.server.xmppjetty;
 
 import javax.servlet.http.HttpServletRequest;
 

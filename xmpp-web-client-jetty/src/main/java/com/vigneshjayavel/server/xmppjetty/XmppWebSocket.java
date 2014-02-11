@@ -1,4 +1,4 @@
-package xmppjetty;
+package com.vigneshjayavel.server.xmppjetty;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,9 +25,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 
-import pojo.Data;
-import pojo.Message;
-import pojo.User;
+import com.vigneshjayavel.server.pojo.Data;
+import com.vigneshjayavel.server.pojo.Message;
+import com.vigneshjayavel.server.pojo.User;
 
 public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 		MessageListener, ChatManagerListener {
