@@ -21,3 +21,8 @@ Sample xmpp web client implemented with Java-jetty.
 #License#
 
 You may use the project under the terms of the MIT License
+
+
+#Note
+
+You have to set the subscription modes for the users in OpenFire admin console for getting the presence status.

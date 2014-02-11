@@ -29,6 +29,8 @@ public class ProxyServer {
 
 		XmppWebSocketServlet xmppWebSocketServlet = new XmppWebSocketServlet();
 		ServletHolder servletHolder = new ServletHolder(xmppWebSocketServlet);
+		//Preventing the WebSocket connection from terminating after 5mins of idle time
+		servletHolder.setInitParameter("maxIdleTime", "-1");
 		ServletContextHandler servletContextHandler = new ServletContextHandler();
 		servletContextHandler.addServlet(servletHolder, "/websocket/*");
 

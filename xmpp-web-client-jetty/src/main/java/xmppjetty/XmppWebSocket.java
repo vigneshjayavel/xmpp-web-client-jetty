@@ -89,6 +89,7 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 					// System.out.println(entry);
 					Presence presence = roster.getPresence(entry.getUser());
 					String mode = null;
+					System.out.println(entry.getUser()+" is "+presence.getStatus());
 					if (presence.isAvailable()) {
 						mode = "available";
 					}
