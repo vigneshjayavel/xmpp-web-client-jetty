@@ -1,4 +1,5 @@
-const url = "ws://localhost:8040/websocket";
+const server = "localhost";
+const url = "ws://"+server+":8040/websocket";
 
 var ws;
 var userName;
@@ -14,7 +15,7 @@ $(document).ready(function () {
 	
 	//get ticket from cookie
 	var ticket = $.cookie("ticket");
-	var server = "localhost"
+	
 	if(ticket!=null && ticket!=undefined){
 		alert("You have logged into TCC and your ticket is "+ticket)
 		//do an ajax request to get the userdetails from the ticket
