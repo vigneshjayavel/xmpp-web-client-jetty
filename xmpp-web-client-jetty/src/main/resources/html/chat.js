@@ -11,7 +11,16 @@ if ("WebSocket" in window) {
 }
 
 $(document).ready(function () {
-
+	
+	//get ticket from cookie
+	var ticket = $.cookie("ticket");
+	var server = "localhost"
+	if(ticket!=null && ticket!=undefined){
+		alert("You have logged into TCC and your ticket is "+ticket)
+		//do an ajax request to get the userdetails from the ticket
+	}
+	
+	//login using the userdetails
    $("#login").submit(function () {
 
       console.log("#login submit called");
