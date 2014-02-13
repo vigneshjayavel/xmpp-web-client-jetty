@@ -1,4 +1,4 @@
-const server = "localhost";
+const server = "10.40.80.57";
 const url = "ws://"+server+":8040/websocket";
 const userDetailsServiceUrl = "http://"+server+":8040/getUserDetails"; 
 const xmppAuthenticationServiceUrl = "http://"+server+":8040/doXmppAuthentication";  
@@ -16,8 +16,8 @@ $(document).ready(function () {
 	
 	//get ticket from cookie
 	var ticket = $.cookie("ticket");
-	var userName = $.cookie("membershortname");
-	var orgName = $.cookie("orgshortname");
+	userName = $.cookie("membershortname");
+	orgName = $.cookie("orgshortname");
 	
 	if(ticket!=null && ticket!=undefined){
 		alert("You have logged into TCC and your ticket is "+ticket)
@@ -157,6 +157,7 @@ ws.onmessage = function (event) {
 
          ws.send(JSON.stringify(data));
          console.log("Send message:" + JSON.stringify(data));
+         userName = (userName===undefined||userName===null)?"You":userName;
          var text = "<font color=\"blue\">(" + userName + ") " + message + "</font><br>";
          if (logs[$(":selected").attr("value")] == undefined) {
             logs[$(":selected").attr("value")] = "";
