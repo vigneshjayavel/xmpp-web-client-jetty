@@ -129,7 +129,16 @@ $(document).ready(function () {
   $('input.presenceRadio').click(function(){
  	   $('input.presenceRadio').prop('checked','');
  	   $(this).prop('checked','checked');
- 	   console.log('Changed presence to ' + $(this).val());
+ 	   var presence = $(this).val();
+ 	   //send a ws message to server to update about the status change
+ 	  var data = {
+		    "Type": "presence",
+		    "Data": {
+		       "Text": presence
+		    }
+ 	  };
+ 	  ws.send(JSON.stringify(data));
+ 	  console.log('Changed presence to ' + $(this).val());
   });
   
 });
@@ -141,8 +150,8 @@ function getPresenceColor(presence){
         color = "#FFFF00"; // yellow
      } else if (presence == "available") {
         color = "#00FF00"; // green
-     } else if (presence == "busy") {
-        color = "#FF0000"; // red
+     } else if (presence == "dnd") {
+        color = "#FE2E2E"; // red
      }
     return color;
 }
@@ -156,6 +165,7 @@ ws.onmessage = function (event) {
       for (var i = 0; i < message.Roster.length; i++) {
          var color
          color = getPresenceColor(message.Roster[i].Mode);
+         console.log(message.Roster[i].Remote + " is changed to " + message.Roster[i].Mode);
          $("select#userlist option[value='" + message.Roster[i].Remote + "']").css("color", color);
       }
 

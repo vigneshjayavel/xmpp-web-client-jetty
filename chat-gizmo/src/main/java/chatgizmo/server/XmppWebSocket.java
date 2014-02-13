@@ -117,6 +117,22 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 				Chat chat = chatManager.createChat(messageReceived.getData()
 						.getRemote(), this);
 				chat.sendMessage(messageReceived.getData().getText());
+			} else if (messageReceived.getType().equals("presence")) {
+
+				String updatedPresence = messageReceived.getData().getText();
+				System.out.println(updatedPresence);
+				Presence presence = new Presence(Presence.Type.available);
+				if(updatedPresence.equals("available")){
+					presence.setMode(Presence.Mode.available); 
+				} else if (updatedPresence.equals("dnd")){
+					presence.setMode(Presence.Mode.dnd);					
+				} else if (updatedPresence.equals("away")){
+					presence.setMode(Presence.Mode.away);					
+				} else {
+					presence.setMode(Presence.Mode.xa);					
+				}
+				xmppConnection.sendPacket(presence);				
+				
 			}
 
 		} catch (JsonParseException e) {
@@ -203,12 +219,8 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 		System.out.println(">>presenceChanged:" + presence.getFrom() + " "
 				+ presence);
 		String mode = null;
-		if (presence.isAvailable()) {
-			mode = "available";
-		}
-		if (presence.isAway()) {
-			mode = "away";
-		}
+		mode = presence.getMode().toString();
+		System.out.println("Mode : " + mode);
 		StringTokenizer stringTokenizer = new StringTokenizer(
 				presence.getFrom(), "/");
 		User user = new User(null, stringTokenizer.nextToken(), mode);
