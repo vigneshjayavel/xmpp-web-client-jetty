@@ -1,4 +1,4 @@
-package com.vigneshjayavel.server.xmppjetty;
+package com.vigneshjayavel.server;
 
 import java.io.IOException;
 import java.util.ArrayList;
