@@ -30,14 +30,14 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 
 import com.vigneshjayavel.api.pojo.UserDetails;
 
-public class XmppAuthenticationServlet  extends HttpServlet {
+public class XmppAuthenticationApiServlet  extends HttpServlet {
 
 	private static final long serialVersionUID = -6154475799000019579L;
 	private static ObjectMapper mapper;
 	private static XMPPConnection xmppConnection;
-	private static Logger logger = Logger.getLogger(XmppAuthenticationServlet.class.getName());
+	private static Logger logger = Logger.getLogger(XmppAuthenticationApiServlet.class.getName());
 	
-	public XmppAuthenticationServlet(){
+	public XmppAuthenticationApiServlet(){
 		// load xmpp server props
 		Properties properties = new Properties();
 		try {

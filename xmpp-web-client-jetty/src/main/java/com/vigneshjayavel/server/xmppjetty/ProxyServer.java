@@ -11,7 +11,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import com.vigneshjayavel.api.UserDetailsApiServlet;
-import com.vigneshjayavel.api.XmppAuthenticationServlet;
+import com.vigneshjayavel.api.XmppAuthenticationApiServlet;
 
 public class ProxyServer {
 
@@ -40,7 +40,7 @@ public class ProxyServer {
 		//add the servlet that provides userdetails as api
 		servletContextHandler.addServlet(new ServletHolder(new UserDetailsApiServlet()), "/getUserDetails");
 		//add the servlet that provides xmpp authentication as api
-		servletContextHandler.addServlet(new ServletHolder(new XmppAuthenticationServlet()), "/doXmppAuthentication");
+		servletContextHandler.addServlet(new ServletHolder(new XmppAuthenticationApiServlet()), "/doXmppAuthentication");
 		HandlerList handlerList = new HandlerList();
 		handlerList.setHandlers(new Handler[] { resourceHandler, servletContextHandler });
 		jettyServer.setHandler(handlerList);
