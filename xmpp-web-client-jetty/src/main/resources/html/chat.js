@@ -1,6 +1,6 @@
 const server = "localhost";
 const url = "ws://"+server+":8040/websocket";
-
+const userDetailsServiceUrl = "http://localhost:8040/getUserDetails";  
 var ws;
 var userName;
 var logs = new Object();
@@ -19,6 +19,20 @@ $(document).ready(function () {
 	if(ticket!=null && ticket!=undefined){
 		alert("You have logged into TCC and your ticket is "+ticket)
 		//do an ajax request to get the userdetails from the ticket
+		var ticketJson = {
+			'ticket':ticket
+			};
+		$.post(userDetailsServiceUrl,ticketJson,function(response){
+			
+			if(response.status === '200'){
+				alert('Welcome '+response.userName+"@"+response.orgName);
+				//do an ajax request to register/login the user to the xmpp server
+				$.post();
+			}
+			else{
+				alert("There was an error retrieving result from "+userDetailsServiceUrl);
+			}
+		});
 	}
 	
 	//login using the userdetails

@@ -10,6 +10,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import com.vigneshjayavel.userdetails.api.AuthenticationApiServlet;
+
 public class ProxyServer {
 
 	public static void main(String[] args) throws Exception {
@@ -34,6 +36,8 @@ public class ProxyServer {
 		ServletContextHandler servletContextHandler = new ServletContextHandler();
 		servletContextHandler.addServlet(servletHolder, "/websocket/*");
 
+		//add the servlet that provides userdetails service
+		servletContextHandler.addServlet(new ServletHolder(new AuthenticationApiServlet()), "/getUserDetails");
 		HandlerList handlerList = new HandlerList();
 		handlerList.setHandlers(new Handler[] { resourceHandler, servletContextHandler });
 		jettyServer.setHandler(handlerList);

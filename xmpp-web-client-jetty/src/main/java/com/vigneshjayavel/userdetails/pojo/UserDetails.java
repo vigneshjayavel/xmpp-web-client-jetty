@@ -5,6 +5,13 @@ public class UserDetails {
 	private String emailId;
 	private String orgName;
 	private String ticket;
+	private String status;
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	public String getUserName() {
 		return userName;
 	}
