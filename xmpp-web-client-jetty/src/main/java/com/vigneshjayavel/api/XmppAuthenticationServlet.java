@@ -160,7 +160,7 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 			List<String> jids = getAllUsersInOrganization(null);
 			logger.info("Jids that are present in the organization " + jids.toArray().length);
 			//update the roster entry with all users in the openfire chat system irrespective of the user's group
-			addRosterEntriesForUser(roster,jids,null);
+			addRosterEntriesForUser(roster,jids,userName,null);
 			listRosterEntriesForUser(roster);
 		} catch (XMPPException e) {
 			e.printStackTrace();
@@ -201,10 +201,13 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 		}
 	}
 	
-	public void addRosterEntriesForUser(Roster roster, List<String> jids, String orgName) {
+	public void addRosterEntriesForUser(Roster roster, List<String> jids, String userName, String orgName) {
 		try{
 			for(String jid : jids){
-				roster.createEntry(jid, jid.substring(0, jid.indexOf("@")), null);
+				String user = jid.substring(0, jid.indexOf("@"));
+				if(!userName.equals(user)){
+					roster.createEntry(jid, user, null);
+				}
 			}
 		}
 		catch(XMPPException e){
