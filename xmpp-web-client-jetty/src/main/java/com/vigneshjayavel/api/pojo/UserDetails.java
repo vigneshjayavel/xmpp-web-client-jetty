@@ -2,6 +2,13 @@ package com.vigneshjayavel.api.pojo;
 
 public class UserDetails {
 	private String userName;
+	private String password;
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	private String emailId;
 	private String orgName;
 	private String ticket;

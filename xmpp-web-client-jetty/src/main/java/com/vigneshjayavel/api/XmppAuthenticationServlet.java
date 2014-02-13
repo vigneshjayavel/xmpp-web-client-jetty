@@ -99,6 +99,7 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 		//we can set the user details
 		userDetails.setUserName(userName);
 		userDetails.setOrgName(orgName);
+		userDetails.setPassword(password);
 		userDetails.setStatus("200");
 		return userDetails;
 	}
@@ -164,8 +165,6 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 		}
 	}
 	
-
-	
 	public List<String> getAllUsersInOrganization(XMPPConnection xmppConnection, String orgName){
 		List<String> resultJids = new ArrayList<String>();
 		try {
@@ -210,9 +209,5 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-/*
-	public static void main(String[] args) {
-		new XmppAuthenticationServlet().addNewUserToOpenFire("faa", "aaa", "aaa@aaa.com", "Some sample organization");
-	}*/
 
 }

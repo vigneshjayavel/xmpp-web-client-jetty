@@ -1,6 +1,7 @@
 const server = "localhost";
 const url = "ws://"+server+":8040/websocket";
-const userDetailsServiceUrl = "http://localhost:8040/getUserDetails";  
+const userDetailsServiceUrl = "http://"+server+":8040/getUserDetails"; 
+const xmppAuthenticationServiceUrl = "http://"+server+":8040/doXmppAuthentication";  
 var ws;
 var userName;
 var logs = new Object();
@@ -23,11 +24,27 @@ $(document).ready(function () {
 			'ticket':ticket
 			};
 		$.post(userDetailsServiceUrl,ticketJson,function(response){
-			
 			if(response.status === '200'){
 				alert('Welcome '+response.userName+"@"+response.orgName);
 				//do an ajax request to register/login the user to the xmpp server
-				$.post();
+				$.post(xmppAuthenticationServiceUrl,response,function(userDetails){
+					if(userDetails.status === '200'){
+						console.log(userDetails);
+						var data = {
+							"Type": "login",
+							"Data": {
+								"UserName": userDetails.userName,
+								"Password": userDetails.password,
+								"Server": server
+							}	
+						}
+						console.log("ws connection created");
+						ws.send(JSON.stringify(data));
+					}
+					else{
+						alert('auth error!! : '+xmppAuthenticationServiceUrl);
+					}
+				});
 			}
 			else{
 				alert("There was an error retrieving result from "+userDetailsServiceUrl);
