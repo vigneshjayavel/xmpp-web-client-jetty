@@ -1,4 +1,4 @@
-package com.vigneshjayavel.userdetails.pojo;
+package com.vigneshjayavel.api.pojo;
 
 public class UserDetails {
 	private String userName;

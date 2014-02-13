@@ -1,5 +1,6 @@
 package com.vigneshjayavel.api;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +10,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jivesoftware.smack.AccountManager;
@@ -22,40 +28,27 @@ import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
-import com.vigneshjayavel.api.pojo.LoginStatus;
+import com.vigneshjayavel.api.pojo.UserDetails;
 
-public class XmppAuthenticationServlet {
+public class XmppAuthenticationServlet  extends HttpServlet {
 
-	/* 
-	 * // get username,orgname, password 
-	 * // call tcc login api and parse the result 
-	 * // if the result is success, 
-	 * 			// then check whether the user is present in openfire's db 
-	 * 			// if the user is present in the openfire's db
-	 * 				// login into the openfire server and an xmpp session is created. 
-	 * 			// else if the user is not present in the openfire's db 
-	 * 				// create a record for the user in the openfire db 
-	 * 				// login into the openfire server and an xmpp session is created. 
-	 * // else if the result is failure 
-	 * 			// throw authentication failure exception
-	 */
+	private static final long serialVersionUID = -6154475799000019579L;
 	private static ObjectMapper mapper;
 	private static XMPPConnection xmppConnection;
 	private static Logger logger = Logger.getLogger(XmppAuthenticationServlet.class.getName());
+	
 	public XmppAuthenticationServlet(){
 		// load xmpp server props
 		Properties properties = new Properties();
 		try {
 			properties.load(this.getClass().getResourceAsStream(
 					"/server.properties"));
-
 			// Set XMPP connection
 			SmackConfiguration.setPacketReplyTimeout(5000);
 			ConnectionConfiguration config = new ConnectionConfiguration(
 					properties.getProperty("xmpphost"), 5222, "localhost");
 			config.setSASLAuthenticationEnabled(false);
-
-			// Log in to XMPP server
+			// Login to XMPP server
 			xmppConnection = new XMPPConnection(config);
 			xmppConnection.connect();
 			mapper = new ObjectMapper();
@@ -65,24 +58,49 @@ public class XmppAuthenticationServlet {
 		}
 		logger.setLevel(Level.ALL);
 	}
-
-	public boolean isAuthenticTccUser(String userName, String password,
-			String orgName) {
-		String urlFormat = "http://localhost/tcc/login?username=%s&password=%s&orgname=%s";
-		String url = String.format(urlFormat, "tccadmin", "tcc4ever!", "tcc");
-		LoginStatus loginStatus = null;
-		String response = Util.sendGetRequest(url);
-
-		try {
-			loginStatus = mapper.readValue(response, LoginStatus.class);
-			Util.prettyPrint(loginStatus);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return loginStatus.isSuccess();
-
+	
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		String userName = request.getParameter("userName");
+		String orgName = request.getParameter("orgName");
+		String password = userName+orgName;
+		System.out.println("userName : " + userName +";orgName : "+orgName);
+		UserDetails userDetails = authenticate(userName, password, orgName);
+		response.setContentType("application/json");
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.getWriter().println(mapper.writeValueAsString(userDetails));
 	}
+	
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException{
+		this.doGet(request, response);
+	}
+	
+	/* 
+	 * // get username,orgname
+	 * // then check whether the user is present in openfire's db 
+	 * // if the user is present in the openfire's db
+	 * 		// login into the openfire server and an xmpp session is created. 
+	 * // else if the user is not present in the openfire's db 
+	 * 		// create a record for the user in the openfire db 
+	 * 		// login into the openfire server and an xmpp session is created. 
+	 * 		// the session is closed and a response is returned with the xmpp username and success param 
+	 */
 
+	public UserDetails authenticate(String userName, String password, String orgName) {
+		UserDetails userDetails = new UserDetails();
+		if (!isUserRegisteredInOpenFire(xmppConnection, userName)) {
+			// create the user.
+			// he is a firsttime user of the xmpp chat system.
+			addNewUserToOpenFire(userName, password, null, orgName);
+		}
+		//now the user must be a registered xmpp user
+		//we can set the user details
+		userDetails.setUserName(userName);
+		userDetails.setOrgName(orgName);
+		return userDetails;
+	}
+	
 	public boolean isUserRegisteredInOpenFire(XMPPConnection xmppConnection, String userName) {
 		// code for checking whether the username is present in the openfire
 		// database
@@ -106,27 +124,14 @@ public class XmppAuthenticationServlet {
 		return false;
 	}
 
-	public void authenticate(String userName, String password, String orgName) {
-		if (isAuthenticTccUser(userName, password, orgName)) {
-			if (isUserRegisteredInOpenFire(xmppConnection, userName)) {
-				// then just login using the smack api
-				// the user is in no way prompted for the username and password
-				// here
-			} else {
-				// create the user.
-				// he is a firsttime user of the system.
-			}
-		}
-	}
-
 	public void addNewUserToOpenFire(String userName, String password,
-			String emailId, String orgId) {
+			String emailId, String orgName) {
 		// register newuser
 		try{
 			Map<String, String> userAttributes = new HashMap<String, String>();
 			userAttributes.put("user", userName);
 			userAttributes.put("email", emailId);
-			userAttributes.put("group", orgId);
+			userAttributes.put("group", orgName);
 			AccountManager accountManager = new AccountManager(xmppConnection);
 			accountManager.createAccount(userName, password, userAttributes);
 			logger.info("added newuser: " + userName);

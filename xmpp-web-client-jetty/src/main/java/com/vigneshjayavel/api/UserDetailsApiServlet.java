@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.vigneshjayavel.userdetails.pojo.Ticket;
-import com.vigneshjayavel.userdetails.pojo.UserDetails;
+import com.vigneshjayavel.api.pojo.Ticket;
+import com.vigneshjayavel.api.pojo.UserDetails;
 
 /**
  * This servlet runs in Jetty. This acts as a API for the JS client to get the

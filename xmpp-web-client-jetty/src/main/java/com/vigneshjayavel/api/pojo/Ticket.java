@@ -1,4 +1,4 @@
-package com.vigneshjayavel.userdetails.pojo;
+package com.vigneshjayavel.api.pojo;
 
 public class Ticket {
 	String ticket;
