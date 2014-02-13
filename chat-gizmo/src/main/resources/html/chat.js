@@ -90,8 +90,28 @@ $(document).ready(function () {
 
       return false;
    });
-
+   
+   //handler
+   $('input.presenceRadio').click(function(){
+	   $('input.presenceRadio').prop('checked','');
+	   $(this).prop('checked','checked');
+	   console.log('Changed presence to ' + $(this).val());
+   });
+   
 });
+
+function getPresenceColor(presence){
+    if (presence == null) {
+        color = "#808080"; // gray
+     } else if (presence == "away") {
+        color = "#FFFF00"; // yellow
+     } else if (presence == "available") {
+        color = "#00FF00"; // green
+     } else if (presence == "busy") {
+        color = "#FF0000"; // red
+     }
+    return color;
+}
 
 ws.onmessage = function (event) {
    console.log("Received message:" + event.data);
@@ -99,15 +119,8 @@ ws.onmessage = function (event) {
    if (message.Type == "presence") {
       for (var i = 0; i < message.Roster.length; i++) {
          var color
-         if (message.Roster[i].Mode == null) {
-            color = "#808080"; // gray
-         } else if (message.Roster[i].Mode == "away") {
-            color = "#FF0000"; // red
-         } else if (message.Roster[i].Mode == "available") {
-            color = "#0000FF"; // blue
-         }
-         $(
-            "select#userlist option[value='" + message.Roster[i].Remote + "']").css("color", color);
+         color = getPresenceColor(message.Roster[i].Mode);
+         $("select#userlist option[value='" + message.Roster[i].Remote + "']").css("color", color);
       }
 
    } else if (message.Type == "chat") {
@@ -129,13 +142,7 @@ ws.onmessage = function (event) {
       console.log("Roster length : " + message.Roster.length);
       for (var i = 0; i < message.Roster.length; i++) {
          var color
-         if (message.Roster[i].Mode == null) {
-            color = "#808080"; // gray
-         } else if (message.Roster[i].Mode == "away") {
-            color = "#FF0000"; // red
-         } else if (message.Roster[i].Mode == "available") {
-            color = "#0000FF"; // blue
-         }
+         color = getPresenceColor(message.Roster[i].Mode);
          console.log("added " + message.Roster[i].Name + " to the rosterlist");
          $("select#userlist").append($('<option>').html(message.Roster[i].Name).val(message.Roster[i].Remote).css("color", color));
       }
