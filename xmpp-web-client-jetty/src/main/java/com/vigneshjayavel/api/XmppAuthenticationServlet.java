@@ -64,7 +64,7 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 		String userName = request.getParameter("userName");
 		String orgName = request.getParameter("orgName");
 		String password = userName+orgName;
-		System.out.println("userName : " + userName +";orgName : "+orgName);
+		System.out.println("userName : " + userName +"; orgName : "+orgName);
 		UserDetails userDetails = authenticate(userName, password, orgName);
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
@@ -93,11 +93,13 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 			// create the user.
 			// he is a firsttime user of the xmpp chat system.
 			addNewUserToOpenFire(userName, password, null, orgName);
+			userDetails.setXmppAuthStatus("newuser");
 		}
 		//now the user must be a registered xmpp user
 		//we can set the user details
 		userDetails.setUserName(userName);
 		userDetails.setOrgName(orgName);
+		userDetails.setStatus("200");
 		return userDetails;
 	}
 	
@@ -208,9 +210,9 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
+/*
 	public static void main(String[] args) {
 		new XmppAuthenticationServlet().addNewUserToOpenFire("faa", "aaa", "aaa@aaa.com", "Some sample organization");
-	}
+	}*/
 
 }

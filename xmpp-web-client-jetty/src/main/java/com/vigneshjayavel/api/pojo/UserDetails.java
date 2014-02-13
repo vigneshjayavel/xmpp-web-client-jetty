@@ -6,6 +6,13 @@ public class UserDetails {
 	private String orgName;
 	private String ticket;
 	private String status;
+	private String xmppAuthStatus = "existinguser";
+	public String getXmppAuthStatus() {
+		return xmppAuthStatus;
+	}
+	public void setXmppAuthStatus(String xmppAuthStatus) {
+		this.xmppAuthStatus = xmppAuthStatus;
+	}
 	public String getStatus() {
 		return status;
 	}

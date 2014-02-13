@@ -11,6 +11,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import com.vigneshjayavel.api.UserDetailsApiServlet;
+import com.vigneshjayavel.api.XmppAuthenticationServlet;
 
 public class ProxyServer {
 
@@ -34,10 +35,12 @@ public class ProxyServer {
 		//Preventing the WebSocket connection from terminating after 5mins of idle time
 		servletHolder.setInitParameter("maxIdleTime", "-1");
 		ServletContextHandler servletContextHandler = new ServletContextHandler();
+		//add the servlet that provides the chat frontend and websockets
 		servletContextHandler.addServlet(servletHolder, "/websocket/*");
-
-		//add the servlet that provides userdetails service
+		//add the servlet that provides userdetails as api
 		servletContextHandler.addServlet(new ServletHolder(new UserDetailsApiServlet()), "/getUserDetails");
+		//add the servlet that provides xmpp authentication as api
+		servletContextHandler.addServlet(new ServletHolder(new XmppAuthenticationServlet()), "/doXmppAuthentication");
 		HandlerList handlerList = new HandlerList();
 		handlerList.setHandlers(new Handler[] { resourceHandler, servletContextHandler });
 		jettyServer.setHandler(handlerList);
