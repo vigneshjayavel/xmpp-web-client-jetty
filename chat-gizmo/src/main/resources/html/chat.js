@@ -90,14 +90,48 @@ $(document).ready(function () {
 
       return false;
    });
-   
-   //handler
-   $('input.presenceRadio').click(function(){
-	   $('input.presenceRadio').prop('checked','');
-	   $(this).prop('checked','checked');
-	   console.log('Changed presence to ' + $(this).val());
-   });
-   
+
+ //DOM event handlers
+ $("#chat").submit(function () {
+     var message = $("#message").val();
+     var data = {
+        "Type": "chat",
+        "Data": {
+           "Remote": $(":selected").attr("value"),
+           "Text": message
+        }
+     };
+
+     ws.send(JSON.stringify(data));
+     console.log("Send message:" + JSON.stringify(data));
+     userName = (userName===undefined||userName===null)?"You":userName;
+     var text = "<font color=\"blue\">(" + userName + ") " + message + "</font><br>";
+     if (logs[$(":selected").attr("value")] == undefined) {
+        logs[$(":selected").attr("value")] = "";
+     }
+     logs[$(":selected").attr("value")] += text;
+     $("div.log").append(text);
+     $("#message").val("");
+     return false;
+  });
+
+  $("select#userlist").click(function () {
+     console.log(logs[$(":selected").attr("value")]);
+     $(":selected").css("background", "#FFF");
+     if (logs[$(":selected").attr(
+        "value")] != undefined) {
+        $("div.log").html(logs[$(":selected").attr("value")]);
+     } else {
+        $("div.log").html("");
+     }
+  });
+
+  $('input.presenceRadio').click(function(){
+ 	   $('input.presenceRadio').prop('checked','');
+ 	   $(this).prop('checked','checked');
+ 	   console.log('Changed presence to ' + $(this).val());
+  });
+  
 });
 
 function getPresenceColor(presence){
@@ -113,6 +147,8 @@ function getPresenceColor(presence){
     return color;
 }
 
+
+//handling messages from server
 ws.onmessage = function (event) {
    console.log("Received message:" + event.data);
    var message = JSON.parse(event.data);
@@ -152,40 +188,6 @@ ws.onmessage = function (event) {
 	   $('#loginBox').remove();
 	   $('#chatBox').show();
 	   
-      $("#chat").submit(function () {
-         var message = $("#message").val();
-         var data = {
-            "Type": "chat",
-            "Data": {
-               "Remote": $(":selected").attr("value"),
-               "Text": message
-            }
-         };
-
-         ws.send(JSON.stringify(data));
-         console.log("Send message:" + JSON.stringify(data));
-         userName = (userName===undefined||userName===null)?"You":userName;
-         var text = "<font color=\"blue\">(" + userName + ") " + message + "</font><br>";
-         if (logs[$(":selected").attr("value")] == undefined) {
-            logs[$(":selected").attr("value")] = "";
-         }
-         logs[$(":selected").attr("value")] += text;
-         $("div.log").append(text);
-         $("#message").val("");
-         return false;
-      });
-
-      $("select#userlist").click(function () {
-         console.log(logs[$(":selected").attr("value")]);
-         $(":selected").css("background", "#FFF");
-         if (logs[$(":selected").attr(
-            "value")] != undefined) {
-            $("div.log").html(logs[$(":selected").attr("value")]);
-         } else {
-            $("div.log").html("");
-         }
-      });
-
    }
 };
 
@@ -207,3 +209,4 @@ window.onunload = function () {
    ws.close(code, reason);
    console.log("ws connection disposed");
 }
+
