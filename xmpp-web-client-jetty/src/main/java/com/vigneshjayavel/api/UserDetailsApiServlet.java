@@ -1,4 +1,4 @@
-package com.vigneshjayavel.userdetails.api;
+package com.vigneshjayavel.api;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -28,7 +28,7 @@ import com.vigneshjayavel.userdetails.pojo.UserDetails;
  * userdetails based on the ticket that is fetched from the cookie
  * 
  */
-public class AuthenticationApiServlet extends HttpServlet {
+public class UserDetailsApiServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6154475799000019575L;
 

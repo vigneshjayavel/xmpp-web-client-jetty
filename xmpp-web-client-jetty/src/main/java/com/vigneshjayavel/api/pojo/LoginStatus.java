@@ -1,4 +1,4 @@
-package com.vigneshjayavel.auth.pojo;
+package com.vigneshjayavel.api.pojo;
 
 public class LoginStatus {
 

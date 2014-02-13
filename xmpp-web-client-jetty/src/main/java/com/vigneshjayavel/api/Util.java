@@ -1,4 +1,4 @@
-package com.vigneshjayavel.auth;
+package com.vigneshjayavel.api;
 
 import java.io.BufferedReader;
 import java.io.IOException;

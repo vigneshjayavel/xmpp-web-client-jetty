@@ -1,4 +1,4 @@
-package com.vigneshjayavel.auth;
+package com.vigneshjayavel.api;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,9 +22,9 @@ import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
-import com.vigneshjayavel.auth.pojo.LoginStatus;
+import com.vigneshjayavel.api.pojo.LoginStatus;
 
-public class Authenticator {
+public class XmppAuthenticationServlet {
 
 	/* 
 	 * // get username,orgname, password 
@@ -41,8 +41,8 @@ public class Authenticator {
 	 */
 	private static ObjectMapper mapper;
 	private static XMPPConnection xmppConnection;
-	private static Logger logger = Logger.getLogger(Authenticator.class.getName());
-	public Authenticator(){
+	private static Logger logger = Logger.getLogger(XmppAuthenticationServlet.class.getName());
+	public XmppAuthenticationServlet(){
 		// load xmpp server props
 		Properties properties = new Properties();
 		try {
@@ -205,7 +205,7 @@ public class Authenticator {
 	}
 
 	public static void main(String[] args) {
-		new Authenticator().addNewUserToOpenFire("faa", "aaa", "aaa@aaa.com", "Some sample organization");
+		new XmppAuthenticationServlet().addNewUserToOpenFire("faa", "aaa", "aaa@aaa.com", "Some sample organization");
 	}
 
 }
