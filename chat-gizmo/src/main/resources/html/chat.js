@@ -148,7 +148,7 @@ function getPresenceColor(presence){
         color = "#808080"; // gray
      } else if (presence == "away") {
         color = "#FFFF00"; // yellow
-     } else if (presence == "available") {
+     } else if (presence == "available" || presence == "chat") {
         color = "#00FF00"; // green
      } else if (presence == "dnd") {
         color = "#FE2E2E"; // red
