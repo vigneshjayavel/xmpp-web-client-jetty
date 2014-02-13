@@ -66,6 +66,7 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 		String password = userName+orgName;
 		System.out.println("userName : " + userName +"; orgName : "+orgName);
 		UserDetails userDetails = authenticate(userName, password, orgName);
+		disconnectXmpp();
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.getWriter().println(mapper.writeValueAsString(userDetails));
@@ -113,6 +114,9 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 		// this does involve api call to the openfire server to retrieve the
 		// user's registration status
 		try {
+			if(!xmppConnection.isConnected()){
+				connectXmpp();
+			}
 			UserSearchManager search = new UserSearchManager(xmppConnection);
 			String searchService = "search.localhost";
 			Form searchForm = search.getSearchForm(searchService);
@@ -138,6 +142,9 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 			userAttributes.put("user", userName);
 			userAttributes.put("email", emailId);
 			userAttributes.put("group", orgName);
+			if(!xmppConnection.isConnected()){
+				connectXmpp();
+			}
 			AccountManager accountManager = new AccountManager(xmppConnection);
 			accountManager.createAccount(userName, password, userAttributes);
 			logger.info("added newuser: " + userName);
@@ -154,6 +161,9 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 		}
 		//Update the roster for the existing user or newly created user.
 		try {
+			if(!xmppConnection.isConnected()){
+				connectXmpp();
+			}
 			xmppConnection.login(userName, password);
 			logger.fine(xmppConnection.getUser());
 			Roster roster = xmppConnection.getRoster();
@@ -170,6 +180,9 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 	public List<String> getAllUsersInOrganization(String orgName){
 		List<String> resultJids = new ArrayList<String>();
 		try {
+			if(!xmppConnection.isConnected()){
+				connectXmpp();
+			}
 			UserSearchManager search = new UserSearchManager(xmppConnection);
 			String searchService = "search."+xmppConnection.getServiceName();
 			Form searchForm = search.getSearchForm(searchService);
@@ -204,14 +217,28 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 	public void addRosterEntriesForUser(Roster roster, List<String> jids, String userName, String orgName) {
 		try{
 			for(String jid : jids){
-				String user = jid.substring(0, jid.indexOf("@"));
-				if(!userName.equals(user)){
-					roster.createEntry(jid, user, null);
+				String friend = jid.substring(0, jid.indexOf("@"));
+				if(!userName.equals(friend)){
+					roster.createEntry(jid, friend, null);
 				}
 			}
 		}
 		catch(XMPPException e){
 			e.printStackTrace();
+		}
+	}
+	
+	private void connectXmpp(){
+		try {
+			xmppConnection.connect();
+		} catch (XMPPException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void disconnectXmpp(){
+		if(xmppConnection.isConnected()){
+			xmppConnection.disconnect();
 		}
 	}
 
