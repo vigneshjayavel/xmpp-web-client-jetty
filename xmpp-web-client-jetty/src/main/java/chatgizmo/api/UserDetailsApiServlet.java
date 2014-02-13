@@ -1,4 +1,4 @@
-package com.vigneshjayavel.api;
+package chatgizmo.api;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.vigneshjayavel.api.pojo.Ticket;
-import com.vigneshjayavel.api.pojo.UserDetails;
+import chatgizmo.api.pojo.Ticket;
+import chatgizmo.api.pojo.UserDetails;
 
 /**
  * This servlet runs in Jetty. This acts as a API for the JS client to get the

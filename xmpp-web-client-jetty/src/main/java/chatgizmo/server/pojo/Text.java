@@ -1,4 +1,4 @@
-package com.vigneshjayavel.server.pojo;
+package chatgizmo.server.pojo;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 

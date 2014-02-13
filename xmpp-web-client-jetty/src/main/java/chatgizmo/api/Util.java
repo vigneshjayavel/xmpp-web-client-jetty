@@ -1,4 +1,4 @@
-package com.vigneshjayavel.api;
+package chatgizmo.api;
 
 import java.io.BufferedReader;
 import java.io.IOException;

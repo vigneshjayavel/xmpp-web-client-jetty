@@ -1,4 +1,4 @@
-package com.vigneshjayavel.server.pojo;
+package chatgizmo.server.pojo;
 
 import java.util.List;
 

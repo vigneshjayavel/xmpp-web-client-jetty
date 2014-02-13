@@ -1,4 +1,4 @@
-package com.vigneshjayavel.server;
+package chatgizmo.server;
 
 import javax.servlet.http.HttpServletRequest;
 

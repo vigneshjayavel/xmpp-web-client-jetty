@@ -1,4 +1,4 @@
-package com.vigneshjayavel.server;
+package chatgizmo.server;
 
 import java.util.Properties;
 
@@ -10,8 +10,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import com.vigneshjayavel.api.UserDetailsApiServlet;
-import com.vigneshjayavel.api.XmppAuthenticationApiServlet;
+import chatgizmo.api.UserDetailsApiServlet;
+import chatgizmo.api.XmppAuthenticationApiServlet;
 
 public class ProxyServer {
 

@@ -1,4 +1,4 @@
-package com.vigneshjayavel.api;
+package chatgizmo.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import org.jivesoftware.smackx.Form;
 import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
-import com.vigneshjayavel.api.pojo.UserDetails;
+import chatgizmo.api.pojo.UserDetails;
 
 public class XmppAuthenticationApiServlet  extends HttpServlet {
 

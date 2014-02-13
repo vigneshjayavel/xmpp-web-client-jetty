@@ -1,4 +1,4 @@
-package com.vigneshjayavel.api.pojo;
+package chatgizmo.api.pojo;
 
 public class Ticket {
 	String ticket;
