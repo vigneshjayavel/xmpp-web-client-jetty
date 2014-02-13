@@ -1,4 +1,4 @@
-package com.vigneshjayavel.auth.service;
+package com.vigneshjayavel.userdetails.api;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
