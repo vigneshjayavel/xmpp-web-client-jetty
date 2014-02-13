@@ -16,6 +16,8 @@ $(document).ready(function () {
 	
 	//get ticket from cookie
 	var ticket = $.cookie("ticket");
+	var userName = $.cookie("membershortname");
+	var orgName = $.cookie("orgshortname");
 	
 	if(ticket!=null && ticket!=undefined){
 		alert("You have logged into TCC and your ticket is "+ticket)
@@ -27,27 +29,43 @@ $(document).ready(function () {
 			if(response.status === '200'){
 				alert('Welcome '+response.userName+"@"+response.orgName);
 				//do an ajax request to register/login the user to the xmpp server
-				$.post(xmppAuthenticationServiceUrl,response,function(userDetails){
-					if(userDetails.status === '200'){
-						console.log(userDetails);
-						var data = {
-							"Type": "login",
-							"Data": {
-								"UserName": userDetails.userName,
-								"Password": userDetails.password,
-								"Server": server
-							}	
-						}
-						console.log("ws connection created");
-						ws.send(JSON.stringify(data));
-					}
-					else{
-						alert('auth error!! : '+xmppAuthenticationServiceUrl);
-					}
-				});
+				xmppLogin(response);
 			}
 			else{
 				alert("There was an error retrieving result from "+userDetailsServiceUrl);
+			}
+		});
+	}
+	else if(userName !=null && userName != undefined && orgName != null && orgName != undefined){
+		alert('You have cookies set and we identified you as '+userName+"@"+orgName);
+		var userDetails = {
+				'userName' : userName,
+				'orgName' : orgName
+		}
+		//do an ajax request to register/login the user to the xmpp server
+		xmppLogin(userDetails);
+	}
+	else{
+		alert("Your TCC session seems to be old/expired. Please Relogin into TCC");
+	}
+	
+	function xmppLogin(userDetails){
+		$.post(xmppAuthenticationServiceUrl,userDetails,function(userDetails){
+			if(userDetails.status === '200'){
+				console.log(userDetails);
+				var data = {
+					"Type": "login",
+					"Data": {
+						"UserName": userDetails.userName,
+						"Password": userDetails.password,
+						"Server": server
+					}	
+				}
+				console.log("ws connection created");
+				ws.send(JSON.stringify(data));
+			}
+			else{
+				alert('auth error!! : '+xmppAuthenticationServiceUrl);
 			}
 		});
 	}

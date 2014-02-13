@@ -89,11 +89,14 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 
 	public UserDetails authenticate(String userName, String password, String orgName) {
 		UserDetails userDetails = new UserDetails();
-		if (!isUserRegisteredInOpenFire(xmppConnection, userName)) {
+		if (!isUserRegisteredInOpenFire(userName)) {
 			// create the user.
 			// he is a firsttime user of the xmpp chat system.
 			addNewUserToOpenFire(userName, password, null, orgName);
 			userDetails.setXmppAuthStatus("newuser");
+		}
+		else{
+			userDetails.setXmppAuthStatus("existinguser");
 		}
 		//now the user must be a registered xmpp user
 		//we can set the user details
@@ -104,7 +107,7 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 		return userDetails;
 	}
 	
-	public boolean isUserRegisteredInOpenFire(XMPPConnection xmppConnection, String userName) {
+	public boolean isUserRegisteredInOpenFire(String userName) {
 		// code for checking whether the username is present in the openfire
 		// database
 		// this does involve api call to the openfire server to retrieve the
@@ -154,18 +157,17 @@ public class XmppAuthenticationServlet  extends HttpServlet {
 			xmppConnection.login(userName, password);
 			logger.fine(xmppConnection.getUser());
 			Roster roster = xmppConnection.getRoster();
-			List<String> jids = getAllUsersInOrganization(xmppConnection,null);
+			List<String> jids = getAllUsersInOrganization(null);
 			logger.info("Jids that are present in the organization " + jids.toArray().length);
 			//update the roster entry with all users in the openfire chat system irrespective of the user's group
 			addRosterEntriesForUser(roster,jids,null);
 			listRosterEntriesForUser(roster);
-			xmppConnection.disconnect();
 		} catch (XMPPException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public List<String> getAllUsersInOrganization(XMPPConnection xmppConnection, String orgName){
+	public List<String> getAllUsersInOrganization(String orgName){
 		List<String> resultJids = new ArrayList<String>();
 		try {
 			UserSearchManager search = new UserSearchManager(xmppConnection);
