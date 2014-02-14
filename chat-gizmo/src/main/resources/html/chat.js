@@ -143,6 +143,10 @@ $(document).ready(function () {
   
 });
 
+function playSound(filename){   
+    document.getElementById("sound").innerHTML='<audio autoplay="autoplay"><source src="assets/' + filename + '.mp3" type="audio/mpeg" /><source src="assets/' + filename + '.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="assets/' + filename +'.mp3" /></audio>';
+}
+
 function getPresenceColor(presence){
     if (presence == null) {
         color = "#808080"; // gray
@@ -183,6 +187,7 @@ ws.onmessage = function (event) {
       } else {
          $("select#userlist option[value='" + message.Data.Remote + "']")
             .css("background", "#00B9EF");
+         playSound('ping');
       }
    } else if (message.Type == "roster") {
       console.log("Roster length : " + message.Roster.length);
