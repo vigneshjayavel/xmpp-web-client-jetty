@@ -70,7 +70,12 @@ public class XmppWebSocket implements WebSocket.OnTextMessage, RosterListener,
 						messageReceived.getData().getPassword());
 				System.out.println(messageReceived.getData().getUserName()
 						+ " has logged in!");
-
+				
+				// Set the mode as available
+				Presence userPresence = new Presence(Presence.Type.available);
+				userPresence.setMode(Presence.Mode.chat);
+				xmppConnection.sendPacket(userPresence);
+				
 				// Send message to frontend
 				Message messageToSend = new Message("login");
 				webSocketConnection.sendMessage(mapper
