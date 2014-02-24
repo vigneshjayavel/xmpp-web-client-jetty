@@ -1,4 +1,4 @@
-const server = "10.40.80.58";
+const server = "10.40.76.64";
 const url = "ws://"+server+":8040/websocket";
 const userDetailsServiceUrl = "http://"+server+":8040/getUserDetails"; 
 const xmppAuthenticationServiceUrl = "http://"+server+":8040/doXmppAuthentication";  
