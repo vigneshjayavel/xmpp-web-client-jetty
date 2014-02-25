@@ -1,13 +1,102 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>XMPP Chat Client</title>
-	<link href="style.css" rel="stylesheet" type="text/css"></link>
-	<script type="text/javascript"
-		src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
-	<script type="text/javascript" src="chat.js"></script>
-	<script type="text/javascript" src="lib/jquery.cookie.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>XMPP Chat Client</title>
+<script type="text/javascript"
+	src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
+<script type="text/javascript" src="chat.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="../assets/css/bootstrap.css">
+	<script type="text/javascript" src="../assets/js/bootstrap.js"></script>
+<script type="text/javascript" src="lib/jquery.cookie.js"></script>
+<script type="text/javascript" src="../assets/js/bootstrap.js"></script>
+<link
+	href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+	rel="stylesheet">
+	<style>
+.nav-pills>li.active>a,.nav-pills>li.active>a:hover,.nav-pills>li.active>a:focus
+	{
+	color: #fff;
+	background-color: #428bca;
+}
+
+.margintop20 {
+	margin-top: 20px;
+}
+
+.nav-pills>li>a {
+	border-radius: 0px;
+}
+
+a {
+	color: #000;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #000;
+	text-decoration: none;
+}
+
+.nav-stacked>li+li {
+	margin-top: 0px;
+	margin-left: 0;
+	border-bottom: 1px solid #dadada;
+	border-left: 1px solid #dadada;
+	border-right: 1px solid #dadada;
+}
+
+.active2 {
+	border-right: 4px solid #428bca;
+}
+
+.green {
+	color: green;
+}
+
+.red {
+	color: red;
+}
+
+.gray {
+	color: gray;
+}
+
+.yellow {
+	color: yellow;
+}
+
+.orange {
+	color: orange;
+}
+
+.log {
+	overflow: auto;
+	width: 300px;
+	height: 150px;
+	border: 1px black solid;
+	background-color: #FFF;
+	position: relative;
+	clip: rect(auto, auto, auto, auto);
+}
+
+section {
+	float: left;
+	top: 0px;
+	clip: rect(0px, auto, auto, auto);
+	margin: 0px;
+	padding: 0px;
+	height: 200px;
+	width: 300px;
+}
+
+p {
+	padding: 0;
+	margin: 0;
+	left: 0px;
+}
+</style>
 </head>
 
 <body>
@@ -30,28 +119,35 @@
 			<p>
 				<input type="submit" name="submit" id="submit" value="Login" />
 			</p>
-		</form>	
+		</form>
 	</div>
 
-	<div id="chatBox" class="container" style="display:none">
+	<div id="chatBox" class="container" style="display: none">
 
 		<form action="" method="post" name="chat" id="chat">
 			<nav>
-				<select id="userlist" name="userlist" size="30" style="background:black">
-				</select>
-				<h5>Your presence..</h5>
-				<input type="radio" class="presenceRadio" value="available" checked="checked"/>Available</br>
-				<input type="radio" class="presenceRadio" value="dnd" />Busy</br>
-				<input type="radio" class="presenceRadio" value="away" />Away</br>
+			<div class="col-md-3 column margintop20">
+				<ul id="users" class="nav nav-pills nav-stacked">
+					<li class="active"><a href="#">Users</a></li>
+				</ul>
+			</div>
+			<select id="userlist" name="userlist" size="30"
+				style="background: black">
+			</select>
+			<h5>Your presence..</h5>
+			<input type="radio" class="presenceRadio" value="available"
+				checked="checked" />Available</br>
+			<input type="radio" class="presenceRadio" value="dnd" />Busy</br>
+			<input type="radio" class="presenceRadio" value="away" />Away</br>
 			</nav>
 			<section>
-				<div class="log"></div>
-				<p>
-					<input name="message" type="text" id="message" size="100">
-				</p>
+			<div class="log"></div>
+			<p>
+				<input name="message" type="text" id="message" size="100">
+			</p>
 			</section>
 		</form>
 	</div>
-	
+
 </body>
 </html>
