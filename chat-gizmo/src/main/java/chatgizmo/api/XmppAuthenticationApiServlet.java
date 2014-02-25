@@ -129,7 +129,7 @@ public class XmppAuthenticationApiServlet  extends HttpServlet {
 				return true;
 			}
 		} catch (XMPPException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		return false;
 	}

@@ -14,6 +14,7 @@ public class XmppWebSocketServlet extends WebSocketServlet {
 
 	@Override
 	public WebSocket doWebSocketConnect(HttpServletRequest arg0, String arg1) {
+		System.out.println("returned XmppWebSocket");
 		return new XmppWebSocket();
 	}
 
