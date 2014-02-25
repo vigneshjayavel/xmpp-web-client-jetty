@@ -121,11 +121,11 @@ $(document)
 							.submit(
 									function() {
 										var message = $("#message").val();
+										var id = $("ul#users li a.active-blue").attr("id");
 										var data = {
 											"Type" : "chat",
 											"Data" : {
-												"Remote" : $(":selected").attr(
-														"value"),
+												"Remote" : id.replace("-","@"),
 												"Text" : message
 											}
 										};
@@ -138,30 +138,30 @@ $(document)
 										var text = "<font color=\"blue\">("
 												+ userName + ") " + message
 												+ "</font><br>";
-										if (logs[$(":selected").attr("value")] == undefined) {
-											logs[$(":selected").attr("value")] = "";
+										if (logs[id] == undefined) {
+											logs[id] = "";
 										}
-										logs[$(":selected").attr("value")] += text;
+										logs[id] += text;
 										$("div.log").append(text);
 										$("#message").val("");
 										return false;
 									});
 
-					$("select#userlist")
-							.click(
-									function() {
-										console.log(logs[$(":selected").attr(
-												"value")]);
-										$(":selected")
-												.css("background", "#FFF");
-										if (logs[$(":selected").attr("value")] != undefined) {
-											$("div.log").html(
-													logs[$(":selected").attr(
-															"value")]);
-										} else {
-											$("div.log").html("");
-										}
-									});
+				
+					$("ul#users").on("click", "li a", function() {
+						$('section#chatForm').show();
+						var id = $(this).attr("id")
+						$("ul#users li a").removeClass("active-blue");
+						$(this).removeClass("active-red");
+						$(this).addClass("active-blue");
+						console.log(logs[id]);
+						if (logs[id] != undefined) {
+							$("div.log").html(logs[id]);
+						} else {
+							$("div.log").html("");
+						}
+						console.log(id)
+					});
 
 					$('input.presenceRadio').click(function() {
 						$('input.presenceRadio').prop('checked', '');
@@ -213,29 +213,23 @@ ws.onmessage = function(event) {
 			color = getPresenceColor(message.Roster[i].Mode);
 			console.log(message.Roster[i].Remote + " is changed to "
 					+ message.Roster[i].Mode);
-			$(
-					"select#userlist option[value='" + message.Roster[i].Remote
-							+ "']").css("color", color);
 			var id = (message.Roster[i].Remote).replace("@", "-");
 			var select = 'ul#users li a span#' + id;
 			$(select).removeClass("orange green gray red").addClass(color);
 		}
 
 	} else if (message.Type == "chat") {
-		var remote = $(
-				"select#userlist option[value='" + message.Data.Remote + "']")
-				.html();
-		var text = "<font color=\"red\">(" + remote + ") " + message.Data.Text
+		var remote = (message.Data.Remote).replace("@","-");
+		var text = "<font color=\"red\">(" + remote.substring(0,remote.indexOf("-")) + ") " + message.Data.Text
 				+ "</font><br>";
-		if (logs[message.Data.Remote] == undefined) {
-			logs[message.Data.Remote] = "";
+		if (logs[remote] == undefined) {
+			logs[remote] = "";
 		}
-		logs[message.Data.Remote] += text;
-		if ($(":selected").attr("value") == message.Data.Remote) {
+		logs[remote] += text;
+		if ($("ul#users li a.active-blue").attr("id") === remote) {
 			$("div.log").append(text);
 		} else {
-			$("select#userlist option[value='" + message.Data.Remote + "']")
-					.css("background", "#00B9EF");
+			$("ul#users li a#" + remote).addClass("active-red");
 			playSound('ping');
 		}
 	} else if (message.Type == "roster") {
@@ -245,15 +239,12 @@ ws.onmessage = function(event) {
 			color = getPresenceColor(message.Roster[i].Mode);
 			console.log("added " + message.Roster[i].Name
 					+ " to the rosterlist");
-			$("select#userlist").append(
-					$('<option>').html(message.Roster[i].Name).val(
-							message.Roster[i].Remote).css("color", color));
 			var id = (message.Roster[i].Remote).replace("@", "-");
 			$("ul#users")
 					.append(
-							'<li id='
-									+ message.Roster[i].Name
-									+ '><a href="#"><span class="glyphicon glyphicon-user '
+							'<li><a id="'
+									+ id
+									+ '" href="#"><span class="glyphicon glyphicon-user '
 									+ color + '" id="' + id + '"></span> '
 									+ message.Roster[i].Name + ' </a></li>');
 		}
