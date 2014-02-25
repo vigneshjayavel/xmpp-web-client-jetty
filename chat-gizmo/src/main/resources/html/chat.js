@@ -216,12 +216,9 @@ ws.onmessage = function(event) {
 			$(
 					"select#userlist option[value='" + message.Roster[i].Remote
 							+ "']").css("color", color);
-			$(
-					"ul#users li#" + message.Roster[i].Name + " a span#"
-							+ message.Roster[i].Name).removeClass("orange")
-					.removeClass("green").removeClass("gray")
-					.removeClass("red").addClass(color);
-
+			var id = (message.Roster[i].Remote).replace("@", "-");
+			var select = 'ul#users li a span#' + id;
+			$(select).removeClass("orange green gray red").addClass(color);
 		}
 
 	} else if (message.Type == "chat") {
@@ -251,14 +248,14 @@ ws.onmessage = function(event) {
 			$("select#userlist").append(
 					$('<option>').html(message.Roster[i].Name).val(
 							message.Roster[i].Remote).css("color", color));
+			var id = (message.Roster[i].Remote).replace("@", "-");
 			$("ul#users")
 					.append(
 							'<li id='
 									+ message.Roster[i].Name
 									+ '><a href="#"><span class="glyphicon glyphicon-user '
-									+ color + '" id=' + message.Roster[i].Name
-									+ '></span> ' + message.Roster[i].Name
-									+ ' </a></li>');
+									+ color + '" id="' + id + '"></span> '
+									+ message.Roster[i].Name + ' </a></li>');
 		}
 	} else if (message.Type == "login") {
 
